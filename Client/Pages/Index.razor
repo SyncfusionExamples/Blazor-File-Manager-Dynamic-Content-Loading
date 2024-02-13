@@ -1,0 +1,52 @@
+﻿@page "/"
+
+@using Syncfusion.Blazor.FileManager
+@using Syncfusion.Blazor.DropDowns
+@using System.Text;
+@using System.Text.Json;
+@using Demo.Data;
+
+@inject HttpClient Http
+@inject NavigationManager uriHelper;
+
+
+<span>Signed in: </span>
+<SfDropDownList TValue="int" TItem="User" Placeholder="Select a User" DataSource="@LocalData" Width="200px" @bind-Value="@DropVal">
+    <DropDownListFieldSettings Value="UserId" Text="Name"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="int" TItem="User" ValueChange="OnSelected"></DropDownListEvents>
+</SfDropDownList>
+<div style="margin: 20px 0">
+    <SfFileManager TValue="FileManagerDirectoryContent">
+        <FileManagerAjaxSettings Url="/api/Mail/FileOperations"
+                                 DownloadUrl="/api/Mail/Download"
+                                 UploadUrl="/api/Mail/Upload"
+                                 GetImageUrl="/api/Mail/GetImage">
+        </FileManagerAjaxSettings>
+    </SfFileManager>
+</div>
+
+@code {
+
+    public int DropVal;
+    List<User> LocalData = new List<User>() {
+        new User() { UserId = 1, Name = "User 1" },
+        new User() { UserId = 2, Name = "User 2" },
+        new User() { UserId = 3, Name = "User 3" },
+        };
+    protected override async Task OnInitializedAsync()
+    {
+        // To get the signed item from the data base
+        var id = await Http.GetFromJsonAsync<int>("api/Mail/index");
+        this.DropVal = id;
+    }
+    private async Task OnSelected(ChangeEventArgs<int, User> args)
+    {
+        if (args.IsInteracted)
+        {
+            string stringPayload = await Task.Run(() => JsonSerializer.Serialize(args.ItemData));
+            HttpContent httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
+            await Http.PutAsJsonAsync("api/Mail/SetUser", args.ItemData);
+            uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+        }
+    }
+}
