@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +75,7 @@ namespace Demo.Server.Controllers
             var rootPath = this.root + "\\" + GetName();
             this.operation.RootFolder(this.basePath + "\\" + rootPath);
             FileManagerResponse uploadResponse;
-            uploadResponse = operation.Upload(path, uploadFiles, action, null);
+            uploadResponse = operation.Upload(path, uploadFiles, action, 0);
             if (uploadResponse.Error != null)
             {
                 Response.Clear();

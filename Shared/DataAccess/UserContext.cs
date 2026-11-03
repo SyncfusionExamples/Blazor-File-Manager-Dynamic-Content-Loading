@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Demo.Data;
 
 namespace Demo.Shared.DataAccess
@@ -11,8 +11,10 @@ namespace Demo.Shared.DataAccess
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // To make the sample runnable, replace your local file path for the MDF file here 
-                optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename='D:\GitHub\SyncfusionExamples\FileManager\dynamic-content-loading\file\Blazor-File-Manager-Dynamic-Content-Loading\Demo\Shared\App_Data\NORTHWND.MDF';Integrated Security=True;Connect Timeout=30");
+                // The NORTHWND.MDF database is located in the Shared/App_Data folder of this repository.
+                // The below connection string uses a path relative to the Demo.Shared project directory.
+                var databasePath = System.IO.Path.Combine(System.AppContext.BaseDirectory, @"..\..\..\..\Shared\App_Data\NORTHWND.MDF");
+                optionsBuilder.UseSqlServer($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename='{System.IO.Path.GetFullPath(databasePath)}';Integrated Security=True;Connect Timeout=30");
             }
         }
     }
